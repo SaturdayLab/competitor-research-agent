@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { requireAdmin } from "@/lib/auth/admin-session";
 import { CreateResearchInputSchema } from "@/lib/domain/research";
 import { apiError } from "@/lib/http/api-response";
 import { getResearchRepository } from "@/lib/research/repository-factory";
@@ -8,6 +9,8 @@ export const runtime = "nodejs";
 
 export async function POST(request: Request) {
   try {
+    const authError = requireAdmin(request);
+    if (authError) return authError;
     const input = CreateResearchInputSchema.parse(await request.json());
     const task = await getResearchRepository().createTask(input);
     return NextResponse.json({ task }, { status: 201 });

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { requireAdmin } from "@/lib/auth/admin-session";
 import { getProductSelector } from "@/lib/ai/factory";
 import {
   discoverProducts,
@@ -28,6 +29,8 @@ function cacheKey(request: ReturnType<typeof ProductDiscoveryRequestSchema.parse
 
 export async function POST(request: Request) {
   try {
+    const authError = requireAdmin(request);
+    if (authError) return authError;
     const input = ProductDiscoveryRequestSchema.parse(await request.json());
     const cached = await discoveryCache.getOrCreate(cacheKey(input), () => discoverProducts(input, {
         searchProvider: createSearchProvider(),

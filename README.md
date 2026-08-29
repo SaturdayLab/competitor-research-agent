@@ -2,7 +2,7 @@
 
 面向数字产品的智能竞品调研系统。用户可以手动选择 2–6 个竞品，也可以按产品类别、数量和国内/海外/全球范围自动发现候选产品，确认后再创建调研任务。独立 Worker 领取任务；配置 Brave 后动态规划、搜索、读页、抽取 Evidence、执行缺口补全与独立横向分析、生成报告并运行有界 Reviewer。
 
-> 默认 `SEARCH_PROVIDER=disabled` 时不规划、不搜索、不读页、不分析，报告不能当作有来源的产品结论。`SEARCH_PROVIDER=brave` 且配置了服务端 `BRAVE_SEARCH_API_KEY` 后，才满足真实规划、搜索、读页与分析验收。没有 Key 时不要用 mock 搜索冒充远程调研。本项目定位为本地或受控环境中的 Demo，不规划用户认证、公开部署或生产化能力。
+> 默认 `SEARCH_PROVIDER=disabled` 时不规划、不搜索、不读页、不分析，报告不能当作有来源的产品结论。`SEARCH_PROVIDER=brave` 且配置了服务端 `BRAVE_SEARCH_API_KEY` 后，才满足真实规划、搜索、读页与分析验收。没有 Key 时不要用 mock 搜索冒充远程调研。本项目定位为本地或受控环境中的 Demo，只提供单一管理员密码保护付费操作，不包含完整用户账号体系。
 
 ## 当前能力
 
@@ -12,6 +12,7 @@
 - 单次自动发现最多 2 次 Brave 搜索和 1 次 DeepSeek 筛选，确认后才产生正式调研费用。
 - 候选产品可以逐个锁定；“换一批”只替换未锁定项。相同选品条件在 15 分钟内复用缓存，避免重复搜索费用。
 - 报告提供章节目录与竞品锚点；资料索引和证据摘录默认各显示前 3 条，可按需展开完整列表。
+- 游客可以查看历史任务和已有报告；自动发现、创建调研和重新执行需要管理员密码，会话使用 HttpOnly 签名 Cookie。
 - PostgreSQL 持久化任务队列，使用 `FOR UPDATE SKIP LOCKED` 原子领取。
 - Web 与长任务 Worker 分离。
 - Zod 校验用户输入、模型输出和竞品覆盖。
@@ -64,9 +65,11 @@ npm install
 NEXT_PUBLIC_SUPABASE_URL=...
 SUPABASE_SERVICE_ROLE_KEY=...
 RESEARCH_PROVIDER=demo
+ADMIN_PASSWORD=至少十二位的管理员密码
+ADMIN_SESSION_SECRET=至少三十二位的随机签名密钥
 ```
 
-依次应用 `supabase/migrations` 中的 migration，包括 `202608290006_two_competitor_minimum.sql`；它把单次竞品数量从 3–6 调整为 2–6。Service Role Key 只能用于服务端，不能暴露到浏览器或提交到仓库。
+依次应用 `supabase/migrations` 中的 migration，包括 `202608290006_two_competitor_minimum.sql`；它把单次竞品数量从 3–6 调整为 2–6。Service Role Key、管理员密码和签名密钥只能用于服务端，不能暴露到浏览器或提交到仓库。管理员会话默认有效 8 小时；未配置或长度不足时，所有付费操作会默认拒绝。
 
 ### 3. 启动 Web 和 Worker
 
@@ -200,7 +203,7 @@ Evaluation 读取一次已经完成的真实 Run，按确定性规则计算竞�
 
 ## 当前限制
 
-- 项目定位为本地或受控环境 Demo；用户认证、权限隔离、公开部署、监控告警和限流不在计划范围内。
+- 项目定位为本地或受控环境 Demo；管理员密码只保护付费操作，不提供用户注册、个人数据隔离或多角色权限体系。
 - OpenAI 路径不再继续扩展；当前主验收路径是 DeepSeek + Brave。
 - V4 Planner 动态生成搜索词，但每个竞品仍最多搜索一次。
 - V3 每竞品最多读 2 页；单页失败跳过，零成功或证据为空则任务失败。

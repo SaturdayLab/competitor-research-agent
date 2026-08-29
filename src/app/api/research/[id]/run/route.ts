@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { requireAdmin } from "@/lib/auth/admin-session";
 import { apiError } from "@/lib/http/api-response";
 import { getResearchRepository } from "@/lib/research/repository-factory";
 
@@ -11,6 +12,8 @@ interface RouteContext {
 
 export async function POST(_request: Request, context: RouteContext) {
   try {
+    const authError = requireAdmin(_request);
+    if (authError) return authError;
     const { id } = await context.params;
     const repository = getResearchRepository();
     const task = await repository.getTask(id);

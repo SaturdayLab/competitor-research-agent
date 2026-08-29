@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import { AdminPasswordDialog } from "@/components/admin-password-dialog";
 import type { ResearchStep, ResearchTaskDetail, StepType, TaskStatus } from "@/lib/domain/research";
 import { readApiError } from "@/lib/http/client";
 
@@ -61,6 +62,7 @@ export function ResearchProgress({ taskId }: { taskId: string }) {
   const [detail, setDetail] = useState<ResearchTaskDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [retrying, setRetrying] = useState(false);
+  const [showAdminDialog, setShowAdminDialog] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -94,6 +96,11 @@ export function ResearchProgress({ taskId }: { taskId: string }) {
     setError(null);
     try {
       const response = await fetch(`/api/research/${taskId}/run`, { method: "POST" });
+      if (response.status === 401) {
+        setRetrying(false);
+        setShowAdminDialog(true);
+        return;
+      }
       if (!response.ok) throw new Error(await readApiError(response));
       window.location.reload();
     } catch (retryError) {
@@ -205,6 +212,15 @@ export function ResearchProgress({ taskId }: { taskId: string }) {
           ) : null}
         </div>
       </footer>
+      <AdminPasswordDialog
+        actionLabel="重新执行调研"
+        onAuthenticated={() => {
+          setShowAdminDialog(false);
+          void retry();
+        }}
+        onCancel={() => setShowAdminDialog(false)}
+        open={showAdminDialog}
+      />
     </section>
   );
 }

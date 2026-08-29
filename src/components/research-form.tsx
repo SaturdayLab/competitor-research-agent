@@ -3,6 +3,7 @@
 import { FormEvent, KeyboardEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 
+import { AdminPasswordDialog } from "@/components/admin-password-dialog";
 import { readApiError } from "@/lib/http/client";
 import {
   getCategorySpecificityHint,
@@ -55,6 +56,7 @@ export function ResearchForm() {
   const [discovering, setDiscovering] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [pendingAdminAction, setPendingAdminAction] = useState<"discover" | "submit" | null>(null);
   const categoryHint = getCategorySpecificityHint(category);
 
   function clearDiscoveryResults() {
@@ -149,6 +151,10 @@ export function ResearchForm() {
           excludeProducts: nextExcludedProducts,
         }),
       });
+      if (response.status === 401) {
+        setPendingAdminAction("discover");
+        return;
+      }
       if (!response.ok) throw new Error(await readApiError(response));
       const data = (await response.json()) as {
         products: DiscoveredProduct[];
@@ -183,8 +189,7 @@ export function ResearchForm() {
       : [...current, name]);
   }
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  async function submitResearch() {
     setError(null);
     const finalCompetitors = selectionMode === "manual" && competitorInput.trim()
       ? addCompetitors(competitorInput)
@@ -203,6 +208,11 @@ export function ResearchForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ topic, competitors: finalCompetitors, focus }),
       });
+      if (response.status === 401) {
+        setPendingAdminAction("submit");
+        setSubmitting(false);
+        return;
+      }
       if (!response.ok) throw new Error(await readApiError(response));
       const data = (await response.json()) as { task: { id: string } };
       router.push(`/research/${data.task.id}`);
@@ -210,6 +220,18 @@ export function ResearchForm() {
       setError(submitError instanceof Error ? submitError.message : "创建任务失败");
       setSubmitting(false);
     }
+  }
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    void submitResearch();
+  }
+
+  function continueAfterAdminLogin() {
+    const action = pendingAdminAction;
+    setPendingAdminAction(null);
+    if (action === "discover") void handleDiscovery();
+    if (action === "submit") void submitResearch();
   }
 
   return (
@@ -400,7 +422,13 @@ export function ResearchForm() {
           {submitting ? "正在建立档案…" : "开始调研  →"}
         </button>
       </form>
-      <p className={styles.disclaimer}>未启用联网搜索时，系统只生成用于流程演示的报告，不包含实时来源。</p>
+      <p className={styles.disclaimer}>游客可以查看历史任务和已有报告；自动发现与生成报告需要管理员密码确认。</p>
+      <AdminPasswordDialog
+        actionLabel={pendingAdminAction === "discover" ? "自动发现产品" : "生成调研报告"}
+        onAuthenticated={continueAfterAdminLogin}
+        onCancel={() => setPendingAdminAction(null)}
+        open={pendingAdminAction !== null}
+      />
     </aside>
   );
 }
