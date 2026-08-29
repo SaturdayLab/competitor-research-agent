@@ -1,0 +1,151 @@
+.state {
+  padding: 40px;
+  color: var(--ink-soft);
+}
+
+.empty {
+  display: grid;
+  justify-items: start;
+  padding: 52px;
+}
+
+.empty > span,
+.columns {
+  color: var(--ink-soft);
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.empty h2 {
+  margin: 22px 0 10px;
+  font-family: var(--display);
+  font-size: var(--title-lg);
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.empty p {
+  margin: 0 0 28px;
+  color: var(--ink-soft);
+}
+
+.archive {
+  overflow: hidden;
+}
+
+.columns,
+.row {
+  display: grid;
+  grid-template-columns: 150px 1fr 180px;
+}
+
+.columns {
+  border-bottom: 1px solid var(--ink);
+  background: rgba(231, 225, 213, 0.6);
+  padding: 16px 24px;
+}
+
+.row {
+  min-height: 142px;
+  border-bottom: 1px solid var(--line);
+}
+
+.row:last-child {
+  border-bottom: 0;
+}
+
+.index,
+.subject,
+.action {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  padding: 24px;
+}
+
+.index,
+.subject {
+  border-right: 1px solid var(--line);
+}
+
+.index strong {
+  font-family: var(--display);
+  font-size: 2rem;
+  font-weight: 500;
+}
+
+.index time,
+.subject p {
+  color: var(--ink-soft);
+  font-size: 0.72rem;
+}
+
+.subject h2 {
+  margin: 0 0 10px;
+  font-family: var(--display);
+  font-size: 1.65rem;
+  font-weight: 500;
+}
+
+.subject p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.action {
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.action > span {
+  border: 1px solid var(--line);
+  padding: 5px 8px;
+  font-family: var(--mono);
+  font-size: 0.62rem;
+}
+
+.action > span[data-status="completed"] {
+  border-color: var(--moss);
+  color: var(--moss);
+}
+
+.action > span[data-status="failed"] {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.action a {
+  border-bottom: 1px solid var(--ink);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+@media (max-width: 720px) {
+  .columns {
+    display: none;
+  }
+
+  .row {
+    grid-template-columns: 74px 1fr;
+  }
+
+  .index {
+    padding: 18px 12px;
+  }
+
+  .subject {
+    border-right: 0;
+    padding: 22px 16px;
+  }
+
+  .action {
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+    border-top: 1px solid var(--line);
+    padding: 16px;
+    grid-column: 1 / -1;
+  }
+}

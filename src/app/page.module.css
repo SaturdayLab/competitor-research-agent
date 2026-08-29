@@ -1,0 +1,130 @@
+.page {
+  padding-top: 56px;
+}
+
+.hero {
+  display: grid;
+  min-height: calc(100vh - 160px);
+  align-items: center;
+  gap: clamp(48px, 8vw, 112px);
+  grid-template-columns: minmax(0, 1.15fr) minmax(340px, 0.72fr);
+}
+
+.intro {
+  padding-bottom: 40px;
+}
+
+.workflow {
+  display: grid;
+  max-width: 760px;
+  margin-top: 54px;
+  border-top: 1px solid var(--line);
+  grid-template-columns: repeat(6, 1fr);
+}
+
+.workflowItem {
+  min-width: 0;
+  border-right: 1px solid var(--line);
+  padding: 14px 10px 0;
+}
+
+.workflowItem:first-child {
+  padding-left: 0;
+}
+
+.workflowItem:last-child {
+  border-right: 0;
+}
+
+.workflowItem span,
+.notes article > span {
+  display: block;
+  color: var(--signal-dark);
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.workflowItem strong {
+  display: block;
+  overflow: hidden;
+  margin-top: 8px;
+  font-size: clamp(0.65rem, 1vw, 0.78rem);
+  text-overflow: ellipsis;
+}
+
+.notes {
+  display: grid;
+  margin-top: 72px;
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--line);
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.notes article {
+  min-height: 230px;
+  border-right: 1px solid var(--line);
+  padding: 30px 34px 36px 0;
+}
+
+.notes article + article {
+  padding-left: 34px;
+}
+
+.notes article:last-child {
+  border-right: 0;
+}
+
+.notes h2 {
+  margin: 28px 0 12px;
+  font-family: var(--display);
+  font-size: 1.9rem;
+  font-weight: 500;
+  line-height: 1.08;
+}
+
+.notes p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+.futureNote {
+  background: linear-gradient(135deg, rgba(49, 90, 74, 0.09), transparent);
+}
+
+@media (max-width: 920px) {
+  .hero {
+    min-height: auto;
+    grid-template-columns: 1fr;
+  }
+
+  .intro {
+    padding-bottom: 0;
+  }
+}
+
+@media (max-width: 720px) {
+  .workflow {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .workflowItem {
+    min-height: 64px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .notes {
+    grid-template-columns: 1fr;
+  }
+
+  .notes article,
+  .notes article + article {
+    min-height: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+    padding: 28px 0;
+  }
+}

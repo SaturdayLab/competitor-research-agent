@@ -1,0 +1,26 @@
+.page {
+  max-width: 1080px;
+}
+
+.header {
+  display: grid;
+  max-width: 720px;
+  margin-bottom: 54px;
+  justify-items: start;
+}
+
+.header h1 {
+  margin: 16px 0 0;
+  font-family: var(--display);
+  font-size: var(--title-xl);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.16;
+}
+
+.header p {
+  max-width: 42rem;
+  margin: 16px 0 0;
+  color: var(--ink-soft);
+  line-height: 1.7;
+}
