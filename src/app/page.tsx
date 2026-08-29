@@ -37,7 +37,7 @@ export default function HomePage() {
           <h2>先校验，再写报告</h2>
           <p>模型输出必须通过 Zod，并完整覆盖用户提交的竞品，才允许进入最终报告。</p>
         </article>
-        <article className={styles.futureNote}>
+        <article>
           <span>03 / Grounded evidence</span>
           <h2>结论可以回到原始页面</h2>
           <p>来源与原子证据分开保存；资料不足时明确保留缺口，不用未经验证的内容补齐结论。</p>

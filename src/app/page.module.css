@@ -91,10 +91,6 @@
   line-height: 1.7;
 }
 
-.futureNote {
-  background: linear-gradient(135deg, rgba(49, 90, 74, 0.09), transparent);
-}
-
 @media (max-width: 920px) {
   .hero {
     min-height: auto;
